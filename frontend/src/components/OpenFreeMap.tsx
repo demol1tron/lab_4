@@ -3,9 +3,6 @@ import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { MapIncidentItem } from '../types/incident';
 
-// @ts-ignore
-maplibregl.workerClass = maplibreglWorker;
-
 interface OpenFreeMapProps {
   incidents: MapIncidentItem[];
   center?: [number, number]; // [lng, lat]
@@ -29,7 +26,7 @@ export const OpenFreeMap: React.FC<OpenFreeMapProps> = ({
 
     const map = new maplibregl.Map({
       container: mapContainer.current,
-      style: 'https://tiles.openfreemap.org/styles/liberty',
+      style: 'https://tiles.openfreemap.org/styles/bright',
       center: center,
       zoom: zoom,
     });
@@ -53,25 +50,29 @@ export const OpenFreeMap: React.FC<OpenFreeMapProps> = ({
     markersRef.current = [];
 
     incidents.forEach((item) => {
-// Цвета железнодорожных маркеров
-        let markerColor = '#F59E0B'; // Янтарный (стандартное предупреждение)
-        if (item.severity === 'critical' || item.severity === 'disaster') markerColor = '#DC2626'; // Красный (стоп / ЧП)
-        if (item.severity === 'minor') markerColor = '#10B981'; // Зеленый (штатное устранение)
+      // Цвета железнодорожных маркеров
+      let markerColor = '#F59E0B'; // Янтарный (стандартное предупреждение)
+      if (item.severity === 'critical' || item.severity === 'disaster') {
+        markerColor = '#DC2626'; // Красный (стоп / ЧП)
+      }
+      if (item.severity === 'minor') {
+        markerColor = '#10B981'; // Зеленый (штатное устранение)
+      }
 
-        const popupHtml = `
-          <div style="color: #0f172a; font-family: sans-serif; font-size: 12px; padding: 2px;">
-            <div style="font-weight: 800; font-family: monospace; color: ${markerColor};">${item.incident_number}</div>
-            <div style="font-weight: 700; margin: 2px 0; color: #1e293b;">${item.title}</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px;">
-              Статус: <b>${item.status}</b>
-            </div>
-            <div style="font-size: 11px; color: #334155; line-height: 1.3;">${item.description}</div>
+      const popupHtml = `
+        <div style="color: #0f172a; font-family: sans-serif; font-size: 12px; padding: 2px;">
+          <div style="font-weight: 800; font-family: monospace; color: ${markerColor};">${item.incident_number}</div>
+          <div style="font-weight: 700; margin: 2px 0; color: #1e293b;">${item.title}</div>
+          <div style="font-size: 11px; color: #64748b; margin-bottom: 4px;">
+            Статус: <b>${item.status}</b>
           </div>
-        `;
+          <div style="font-size: 11px; color: #334155; line-height: 1.3;">${item.description}</div>
+        </div>
+      `;
+
       const popup = new maplibregl.Popup({ offset: 25 }).setHTML(popupHtml);
 
-      // Важно: в бэкенде coords передаются как [lat, lon]
-      // MapLibre строго требует [lon, lat]!
+      // MapLibre строго требует порядок [lon, lat]
       const lngLat: [number, number] = [item.coords[1], item.coords[0]];
 
       const marker = new maplibregl.Marker({ color: markerColor })
@@ -91,7 +92,7 @@ export const OpenFreeMap: React.FC<OpenFreeMapProps> = ({
   }, [incidents]);
 
   return (
-    <div className="w-full h-full min-h-[450px] rounded-xl overflow-hidden border border-darkBorder shadow-2xl relative">
+    <div className="w-full h-full min-h-[450px] rounded-xl overflow-hidden border border-[#232A38] shadow-2xl relative">
       <div ref={mapContainer} className="w-full h-full min-h-[450px]" />
     </div>
   );
