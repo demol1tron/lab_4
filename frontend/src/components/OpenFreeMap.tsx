@@ -4,10 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import type { MapIncidentItem } from '../types/incident';
 
 // @ts-ignore
-if (typeof window !== 'undefined' && maplibregl.workerUrl !== undefined) {
-  // @ts-ignore
-  maplibregl.workerUrl = 'https://unpkg.com/maplibre-gl@5.1.0/dist/maplibre-gl-csp-worker.js';
-}
+maplibregl.workerClass = maplibreglWorker;
 
 interface OpenFreeMapProps {
   incidents: MapIncidentItem[];

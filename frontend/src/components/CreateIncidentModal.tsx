@@ -3,6 +3,10 @@ import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { api } from '../api/client';
 import { X, AlertTriangle, MapPin } from 'lucide-react';
+import maplibreglWorker from 'maplibre-gl/dist/maplibre-gl-csp-worker?worker';
+
+// @ts-ignore
+maplibregl.workerClass = maplibreglWorker;
 
 interface CreateModalProps {
   isOpen: boolean;
