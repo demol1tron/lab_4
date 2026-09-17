@@ -21,7 +21,6 @@ export const CreateIncidentModal: React.FC<CreateModalProps> = ({ isOpen, onClos
 
   const miniMapContainer = useRef<HTMLDivElement>(null);
   const miniMapInstance = useRef<maplibregl.Map | null>(null);
-  const pinMarker = useRef<maplibregl.Marker | null>(null);
 
   // Инициализация карты внутри модалки при открытии
   useEffect(() => {

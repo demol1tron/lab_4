@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { TrainTrack, MapPinned, ListTree, Power, User, Radio } from 'lucide-react';
+import { TrainTrack, MapPinned, ListTree, Power, User } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 export const Layout: React.FC = () => {
