@@ -3,6 +3,12 @@ import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { MapIncidentItem } from '../types/incident';
 
+// @ts-ignore
+if (typeof window !== 'undefined' && maplibregl.workerUrl !== undefined) {
+  // @ts-ignore
+  maplibregl.workerUrl = 'https://unpkg.com/maplibre-gl@5.1.0/dist/maplibre-gl-csp-worker.js';
+}
+
 interface OpenFreeMapProps {
   incidents: MapIncidentItem[];
   center?: [number, number]; // [lng, lat]
