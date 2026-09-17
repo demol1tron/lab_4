@@ -4,10 +4,11 @@ import { Layout } from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
 import { MapPage } from './pages/MapPage';
 import { IncidentsPage } from './pages/IncidentsPage';
+import { type ReactNode } from 'react';
 
-function ProtectedRoute({ children }: { children: JSX.Element }) {
+function ProtectedRoute({ children }: { children: ReactNode }) {
   const token = useAuthStore((s) => s.token);
-  return token ? children : <Navigate to="/login" replace />;
+  return token ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
 export default function App() {
