@@ -1,15 +1,18 @@
+import os
 from app.database import SessionLocal
 from app.models.user import User
 from app.models.incident import RailwayObject
 from app.core.security import hash_password
-import os
 
 def init_db():
     db = SessionLocal()
     try:
-        # 1. Проверяем и создаем опорную узловую станцию
-        default_station = db.query(RailwayObject).filter(RailwayObject.id == 1).first()
-        if not default_station:
+        # 1. Проверяем наличие станции по коду или по id
+        station = db.query(RailwayObject).filter(
+            (RailwayObject.id == 1) | (RailwayObject.code == "NSK-01")
+        ).first()
+
+        if not station:
             station = RailwayObject(
                 id=1,
                 code="NSK-01",
@@ -21,9 +24,15 @@ def init_db():
             )
             db.add(station)
             db.commit()
-            print("[DB-INIT] Опорная станция Новосибирск-Главный инициализирована (id=1).")
+            print("[DB-INIT] Станция NSK-01 создана (id=1).")
+        else:
+            # Если станция была создана под другим id, выравниваем на 1
+            if station.id != 1:
+                station.id = 1
+                db.commit()
+            print(f"[DB-INIT] Опорная станция найдена (id={station.id}).")
 
-        # 2. Создаем администратора из переменных окружения
+        # 2. Проверяем и создаем суперпользователя
         admin_email = os.getenv("ADMIN_EMAIL", "admin@railway.ru")
         admin_pass = os.getenv("ADMIN_PASSWORD", "admin123")
 
@@ -38,8 +47,11 @@ def init_db():
             )
             db.add(new_admin)
             db.commit()
-            print(f"[DB-INIT] Создана учетная запись суперпользователя: {admin_email}")
+            print(f"[DB-INIT] Администратор {admin_email} создан.")
         else:
-            print(f"[DB-INIT] Суперпользователь {admin_email} уже активен.")
+            print(f"[DB-INIT] Администратор {admin_email} активен.")
+    except Exception as e:
+        db.rollback()
+        print(f"[DB-INIT] Ошибка инициализации: {e}")
     finally:
         db.close()
