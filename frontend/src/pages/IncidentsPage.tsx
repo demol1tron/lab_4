@@ -3,7 +3,7 @@ import { api } from '../api/client';
 import type { Incident } from '../types/incident';
 import { CreateIncidentModal } from '../components/CreateIncidentModal';
 import { UpdateStatusModal } from '../components/UpdateStatusModal';
-import { ShieldAlert, Plus, Edit, Trash2 } from 'lucide-react';
+import { ShieldAlert, Plus, RefreshCw, Trash2 } from 'lucide-react';
 
 export const IncidentsPage: React.FC = () => {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -25,8 +25,12 @@ export const IncidentsPage: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     if (!confirm('Подтверждаете удаление происшествия?')) return;
-    await api.delete(`/incidents/${id}`);
-    setIncidents((prev) => prev.filter((item) => item.id !== id));
+    try {
+      await api.delete(`/incidents/${id}`);
+      setIncidents((prev) => prev.filter((item) => item.id !== id));
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'Ошибка при удалении инцидента (требуются права администратора)');
+    }
   };
 
   return (
@@ -34,7 +38,7 @@ export const IncidentsPage: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
-            <ShieldAlert className="text-cyan-400" /> Журнал инцидентов Ж/Д безопасности
+            <ShieldAlert className="text-amber-500" /> Журнал инцидентов Ж/Д безопасности
           </h1>
           <p className="text-slate-400 text-xs mt-1">Реестр нештатных ситуаций, отказов технических средств и сбоев</p>
         </div>
@@ -45,10 +49,10 @@ export const IncidentsPage: React.FC = () => {
         </button>
       </div>
 
-      <div className="bg-[#111726] border border-[#1E293B] rounded-xl overflow-hidden">
+      <div className="bg-[#141820] border border-[#232A38] rounded-xl overflow-hidden">
         <table className="w-full text-left border-collapse text-sm">
           <thead>
-            <tr className="border-b border-[#1E293B] text-xs text-slate-400 uppercase bg-[#090D16]/60">
+            <tr className="border-b border-[#232A38] text-xs text-slate-400 uppercase bg-[#0B0D11]/60">
               <th className="py-3 px-4">Номер / Время</th>
               <th className="py-3 px-4">Событие</th>
               <th className="py-3 px-4">Тяжесть</th>
@@ -56,10 +60,10 @@ export const IncidentsPage: React.FC = () => {
               <th className="py-3 px-4 text-right">Действия</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#1E293B]">
+          <tbody className="divide-y border-[#232A38]">
             {incidents.map((row) => (
               <tr key={row.id} className="hover:bg-slate-800/30">
-                <td className="py-3 px-4 font-mono text-cyan-400">{row.incident_number}</td>
+                <td className="py-3 px-4 font-mono text-amber-400 font-semibold">{row.incident_number}</td>
                 <td className="py-3 px-4 font-medium text-white">{row.title}</td>
                 <td className="py-3 px-4 text-amber-400">{row.severity}</td>
                 <td className="py-3 px-4">
@@ -70,14 +74,14 @@ export const IncidentsPage: React.FC = () => {
                 <td className="py-3 px-4 text-right space-x-2">
                   <button
                     onClick={() => setSelectedForEdit(row)}
-                    className="p-1.5 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg"
+                    className="p-1.5 text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 rounded-lg transition"
                     title="Сменить статус"
                   >
-                    <Edit size={16} />
+                    <RefreshCw size={16} />
                   </button>
                   <button
                     onClick={() => handleDelete(row.id)}
-                    className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                    className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
                     title="Удалить"
                   >
                     <Trash2 size={16} />

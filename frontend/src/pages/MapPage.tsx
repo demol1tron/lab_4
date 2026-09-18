@@ -1,6 +1,6 @@
-  import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { api } from '../api/client';
-import { OpenFreeMap } from '../components/OpenFreeMap'; // Подключаем новый компонент
+import { OpenFreeMap } from '../components/OpenFreeMap';
 import type { MapIncidentItem } from '../types/incident';
 import { MapPin, Navigation } from 'lucide-react';
 
@@ -21,7 +21,7 @@ export const MapPage: React.FC = () => {
     <div className="p-6 h-full flex flex-col space-y-4">
       <div>
         <h1 className="text-xl font-bold text-white flex items-center gap-2">
-          <MapPin className="text-cyan-400" /> Обстановка безопасности
+          <MapPin className="text-amber-500" /> Обстановка безопасности
         </h1>
         <p className="text-xs text-slate-400">Мониторинг путей сообщения на свободных картографических тайлах</p>
       </div>
@@ -32,14 +32,14 @@ export const MapPage: React.FC = () => {
         </div>
 
         {/* Боковая карточка инцидента */}
-        <div className="bg-darkCard border border-darkBorder rounded-xl p-4 flex flex-col justify-between">
+        <div className="bg-[#141820] border border-[#232A38] rounded-xl p-4 flex flex-col justify-between">
           {selected ? (
             <div className="space-y-4">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
                 {selected.incident_number}
               </span>
               <h2 className="text-lg font-bold text-white">{selected.title}</h2>
-              <div className="text-xs space-y-2 text-slate-300 bg-darkBg p-3 rounded-lg border border-darkBorder">
+              <div className="text-xs space-y-2 text-slate-300 bg-[#0B0D11] p-3 rounded-lg border border-[#232A38]">
                 <div><strong>Тяжесть:</strong> {selected.severity}</div>
                 <div><strong>Статус:</strong> {selected.status}</div>
                 <div><strong>Широта (Lat):</strong> {selected.coords[0]}</div>

@@ -30,6 +30,8 @@ services:
       SECRET_KEY: server_jwt_secret_key_production_2026
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 120
+      ADMIN_EMAIL: admin@railway.ru
+      ADMIN_PASSWORD: admin123
     networks:
       - railway_net
 

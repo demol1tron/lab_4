@@ -2,9 +2,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.routers import auth, incidents
+from app.init_db import init_db
 
 # Автоматически создаем таблицы в БД при старте (если они еще не созданы DDL)
 Base.metadata.create_all(bind=engine)
+
+Base.metadata.create_all(bind=engine)
+# Автоматически создаем станцию #1 и админа при запуске
+init_db()
 
 app = FastAPI(
     title="Railway Safety API",
