@@ -4,12 +4,6 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { api } from '../api/client';
 import { X, AlertTriangle, MapPin } from 'lucide-react';
 
-// @ts-ignore
-if (maplibregl.config) {
-  // @ts-ignore
-  maplibregl.config.WORKER_URL = 'https://unpkg.com/maplibre-gl@5.1.0/dist/maplibre-gl-csp-worker.js';
-}
-
 interface CreateModalProps {
   isOpen: boolean;
   onClose: () => void;

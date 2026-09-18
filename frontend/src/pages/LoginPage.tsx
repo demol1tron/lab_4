@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import { useAuthStore } from '../store/authStore';
-import { TrainTrack, KeyRound, Mail, UserPlus, LogIn, User } from 'lucide-react';
+import { TrainTrack, KeyRound, Mail, UserPlus, LogIn, User, ShieldCheck } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [role, setRole] = useState<'dispatcher' | 'viewer'>('dispatcher');
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,18 +25,18 @@ export const LoginPage: React.FC = () => {
 
     try {
       if (isRegister) {
-        // 1. Сценарий регистрации нового сотрудника
+        // 1. Регистрация сотрудника с выбранной ролью (dispatcher / viewer)
         await api.post('/auth/register', {
           email,
           password,
           full_name: fullName,
-          role: 'dispatcher', // Стандартный оператор по ТЗ
+          role: role,
         });
-        setSuccessMsg('Учетная запись зарегистрирована! Выполните вход.');
+        setSuccessMsg(`Учетная запись (${role === 'viewer' ? 'Наблюдатель' : 'Диспетчер'}) создана! Войдите в систему.`);
         setIsRegister(false);
         setPassword('');
       } else {
-        // 2. Сценарий авторизации
+        // 2. Авторизация
         const params = new URLSearchParams();
         params.append('username', email);
         params.append('password', password);
@@ -63,7 +64,7 @@ export const LoginPage: React.FC = () => {
             <TrainTrack size={28} />
           </div>
           <h1 className="text-xl font-black text-white uppercase tracking-wider">
-            {isRegister ? 'Регистрация дежурного' : 'Диспетчерский Пульт'}
+            {isRegister ? 'Регистрация персонала' : 'Диспетчерский Пульт'}
           </h1>
           <p className="text-xs text-slate-400">
             {isRegister
@@ -86,22 +87,41 @@ export const LoginPage: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegister && (
-            <div>
-              <label className="text-xs font-mono font-semibold text-slate-300 block mb-1.5 uppercase">
-                ФИО Оператора
-              </label>
-              <div className="relative">
-                <User size={16} className="absolute left-3.5 top-3 text-slate-500" />
-                <input
-                  type="text"
-                  required
-                  placeholder="Иванов И. И."
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full bg-[#0B0D11] border border-[#232A38] rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500 transition"
-                />
+            <>
+              <div>
+                <label className="text-xs font-mono font-semibold text-slate-300 block mb-1.5 uppercase">
+                  ФИО Сотрудника
+                </label>
+                <div className="relative">
+                  <User size={16} className="absolute left-3.5 top-3 text-slate-500" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="Иванов И. И."
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full bg-[#0B0D11] border border-[#232A38] rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500 transition"
+                  />
+                </div>
               </div>
-            </div>
+
+              <div>
+                <label className="text-xs font-mono font-semibold text-slate-300 block mb-1.5 uppercase">
+                  Должность / Уровень доступа
+                </label>
+                <div className="relative">
+                  <ShieldCheck size={16} className="absolute left-3.5 top-3 text-slate-500" />
+                  <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value as 'dispatcher' | 'viewer')}
+                    className="w-full bg-[#0B0D11] border border-[#232A38] rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500 transition"
+                  >
+                    <option value="dispatcher">Дежурный диспетчер (Ввод и контроль ЧП)</option>
+                    <option value="viewer">Инспектор / Аудитор (Только чтение)</option>
+                  </select>
+                </div>
+              </div>
+            </>
           )}
 
           <div>
@@ -144,7 +164,7 @@ export const LoginPage: React.FC = () => {
             className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/15 disabled:opacity-50"
           >
             {isRegister ? <UserPlus size={16} /> : <LogIn size={16} />}
-            {loading ? 'Обработка запроса...' : isRegister ? 'Зарегистрироваться' : 'Авторизовать терминал'}
+            {loading ? 'Обработка запроса...' : isRegister ? 'Зарегистрировать профиль' : 'Авторизовать терминал'}
           </button>
         </form>
 
@@ -160,7 +180,7 @@ export const LoginPage: React.FC = () => {
           >
             {isRegister
               ? 'Уже есть доступ? Войти по табельному номеру'
-              : 'Первичный доступ? Регистрация дежурного'}
+              : 'Первичный доступ? Регистрация сотрудника'}
           </button>
         </div>
       </div>
